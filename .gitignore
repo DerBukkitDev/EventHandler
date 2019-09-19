@@ -1,23 +1,52 @@
-# Compiled class file
-*.class
+package de.DerBukkitDev.farm;
 
-# Log file
-*.log
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.craftbukkit.libs.jline.internal.TerminalLineSettings;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
-# BlueJ files
-*.ctxt
+import de.DerBukkitDev.farm.Main;
 
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
+@SuppressWarnings("unused")
+public class Redstone implements Listener {
+	
+	private Main instance;
+	public Redstone(Main instance) {
+	this.instance = instance;
+	}
+	
+	@EventHandler
+	public void onBreak(BlockBreakEvent e) {
+		 Player p = e.getPlayer();
+		 Block t = e.getBlock();
+		 
+		 if(t.getType() == Material.REDSTONE_ORE) {
+			 t.breakNaturally();
+			 e.setDropItems(false);
+			 Bukkit.getScheduler().runTaskLater(instance, new Runnable() {
+				 @Override
+				 public void run() {
+					 e.getBlock().setType(Material.BEDROCK);
+					
+				 }
+			 }, 20 * 1);
+			 
+			 
+			 Bukkit.getScheduler().runTaskLater(instance, new Runnable() {
+				 @Override
+				 public void run() {
+					e.getBlock().setType(Material.REDSTONE_ORE);
+				 }
+			 }, 20 * 60);
+			 
+		 }
+	}
 
-# Package Files #
-*.jar
-*.war
-*.nar
-*.ear
-*.zip
-*.tar.gz
-*.rar
-
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
-hs_err_pid*
+}
